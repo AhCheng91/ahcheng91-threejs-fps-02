@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>KESSLER WORKS</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./src/style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.min.js" } }
+</script>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="vignette"></div>
+<div id="hud">
+  <div id="top">
+    <div id="compass"><div id="compass-track"></div></div>
+    <div id="score">
+      <span class="tm rooks">ROOKS <b id="score-r">0</b></span>
+      <span class="sep">:</span>
+      <span class="tm wardens"><b id="score-w">0</b> WARDENS</span>
+    </div>
+    <div id="pips"></div>
+  </div>
+
+  <div id="clock">
+    <div id="timer">1:40</div>
+    <div id="bombline"></div>
+    <div id="objective"></div>
+  </div>
+
+  <div id="killfeed"></div>
+  <div id="dmgdir"></div>
+  <div id="dmgflash"></div>
+
+  <div id="crosshair"><i class="ch t"></i><i class="ch b"></i><i class="ch l"></i><i class="ch r"></i><i class="ch dot"></i></div>
+  <div id="hitmarker"><i></i><i></i><i></i><i></i></div>
+
+  <div id="vitals">
+    <div class="vital">
+      <span class="vicon hp">&#x271A;</span>
+      <span class="vlabel">HEALTH</span>
+      <div class="vbar"><div class="fill" id="health"></div><div class="segs"></div></div>
+      <span class="vnum" id="health-num">100</span>
+    </div>
+    <div class="vital">
+      <span class="vicon ar">&#x25C6;</span>
+      <span class="vlabel">ARMOUR</span>
+      <div class="vbar"><div class="fill" id="armour"></div><div class="segs"></div></div>
+      <span class="vnum" id="armour-num">0</span>
+    </div>
+  </div>
+
+  <div id="ammo-box">
+    <div id="ammo"><b id="ammo-mag">30</b><span class="ares">/<span id="ammo-res">90</span></span></div>
+    <div id="weapon">M9 "TACK"</div>
+  </div>
+
+  <div id="money-box"><span class="mlabel">CREDITS</span><div id="money">$800</div></div>
+
+  <div id="progress">
+    <svg viewBox="0 0 72 72">
+      <circle class="ring-bg" cx="36" cy="36" r="30"></circle>
+      <circle id="progress-ring" cx="36" cy="36" r="30"></circle>
+    </svg>
+    <div id="progress-label">PLANTING</div>
+  </div>
+
+  <div id="banner"><div id="banner-main"></div><div id="banner-sub"></div></div>
+
+  <div id="buy" class="overlay">
+    <div class="panel buy-panel">
+      <div class="phead"><span>FIELD SUPPLY</span><span id="buy-money">$800</span></div>
+      <div id="buy-list"></div>
+      <div class="pfoot" id="buy-hint">1-9 BUY &middot; B CLOSE</div>
+    </div>
+  </div>
+
+  <div id="scoreboard" class="overlay">
+    <div class="panel sb-panel">
+      <div class="sb-head"><span>KESSLER WORKS</span><span id="sb-round">ROUND 1</span></div>
+      <div class="sb-team" id="sb-rooks">
+        <h3>ROOKS &mdash; ATTACK</h3>
+        <div class="sb-cols"><span>NAME</span><span>K</span><span>D</span><span>$</span><span></span></div>
+        <div class="sb-rows"></div>
+      </div>
+      <div class="sb-team" id="sb-wardens">
+        <h3>WARDENS &mdash; DEFEND</h3>
+        <div class="sb-cols"><span>NAME</span><span>K</span><span>D</span><span>$</span><span></span></div>
+        <div class="sb-rows"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="start" class="overlay">
+    <div class="panel start-panel">
+      <div class="st-kicker">DECOMMISSIONED FOUNDRY &middot; NIGHT</div>
+      <h1>KESSLER WORKS</h1>
+      <div class="st-sub">ROOKS PLANT THE CHARGE &middot; WARDENS HOLD THE WORKS</div>
+      <div class="st-keys">WASD MOVE &middot; SHIFT WALK &middot; CTRL CROUCH &middot; SPACE JUMP<br>LMB FIRE &middot; RMB AIM &middot; E USE &middot; B BUY &middot; TAB SCORE</div>
+      <div class="st-go">CLICK TO DEPLOY</div>
+    </div>
+  </div>
+</div>
+<div id="diag"></div>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

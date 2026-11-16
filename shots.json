@@ -1,0 +1,6 @@
+[
+  { "name": "1-hold-the-works.jpg", "query": "?shot=cover&seed=1" },
+  { "name": "2-field-supply.jpg", "query": "?shot=buy&seed=1" },
+  { "name": "3-site-a-contact.jpg", "query": "?shot=fight&seed=1" },
+  { "name": "4-charge-armed.jpg", "query": "?shot=objective&seed=1" }
+]
