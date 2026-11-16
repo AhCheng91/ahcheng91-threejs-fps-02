@@ -104,6 +104,34 @@ export function buildWorld(scene) {
     scene.add(band);
   }
 
+  // Overhead pipe runs and roof trusses: silhouette above head height, nothing to collide with.
+  const pipeMat = new THREE.MeshStandardMaterial({ color: 0x5a4a3e, metalness: 0.65, roughness: 0.55 });
+  const pipeGeo = new THREE.CylinderGeometry(0.16, 0.16, 62, 8);
+  const pipeXs = [-14.5, -11.5, 12.5, 15.5];
+  for (const px of pipeXs) {
+    const pipe = new THREE.Mesh(pipeGeo, pipeMat);
+    pipe.rotation.x = Math.PI / 2;
+    pipe.position.set(px, 5.4, 0);
+    scene.add(pipe);
+  }
+  const crossGeo = new THREE.CylinderGeometry(0.13, 0.13, 62, 8);
+  for (const pz of [-22, 0, 20]) {
+    const pipe = new THREE.Mesh(crossGeo, pipeMat);
+    pipe.rotation.z = Math.PI / 2;
+    pipe.position.set(0, 5.7, pz);
+    scene.add(pipe);
+  }
+  const trussMat = new THREE.MeshStandardMaterial({ color: 0x3a3f42, metalness: 0.7, roughness: 0.5 });
+  const trussGeo = new THREE.BoxGeometry(0.22, 0.22, 0.22);
+  for (const tz of [-20, -4, 12, 26]) {
+    for (let tx = -30; tx <= 30; tx += 10) {
+      const beam = new THREE.Mesh(trussGeo, trussMat);
+      beam.scale.set(1, 1, 60);
+      beam.position.set(tx, 7.1, tz);
+      scene.add(beam);
+    }
+  }
+
   const drumGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.95, 12);
   for (const [dx, dz] of [[22, -22], [31, -22], [-22, 22], [-31, 22], [6, 18], [-6, -12]]) {
     const drum = new THREE.Mesh(drumGeo, mats.hazard);
