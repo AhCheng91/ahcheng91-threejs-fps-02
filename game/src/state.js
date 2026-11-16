@@ -49,6 +49,7 @@ export const S = {
   bodies: [],            // dead ragdoll bodies
 
   bombCarrier: null,
+  smokes: [],            // live veils of smoke that block sight
   bomb: null,            // { pos, planted, fuse, fuseMax, site, carrier }
   plantProgress: 0,
   defuseProgress: 0,

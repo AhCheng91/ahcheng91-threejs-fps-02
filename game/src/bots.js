@@ -7,6 +7,8 @@ import { hasLOS } from "./collision.js";
 import { makeAgent, stepBody, wishVector, respawnAgent } from "./player.js";
 import { tryFire, clampPitch } from "./weapons.js";
 
+const S_T = () => performance.now() * 0.001;
+
 const ROLE = {
   HOLD: "hold",
   ADVANCE: "advance",
@@ -36,6 +38,7 @@ export function makeBot(id, name, team, spawn, weaponId) {
     strafe: 0,
     strafeT: 0,
     aimErr: 0,
+    blindT: 0,
     lastHeard: null,
     heardT: 0,
     lane: "mid",
@@ -119,8 +122,22 @@ function eyeOf(a) {
   return { x: a.pos.x, y: a.pos.y + a.eye, z: a.pos.z };
 }
 
+// True when a veil of smoke sits across the line between two points.
+function smokeBlocks(ax, ay, az, bx, by, bz, smokes) {
+  if (!smokes || !smokes.length) return false;
+  const dx = bx - ax, dy = by - ay, dz = bz - az;
+  const len2 = dx * dx + dy * dy + dz * dz || 1;
+  for (const s of smokes) {
+    const t = ((s.x - ax) * dx + (s.y - ay) * dy + (s.z - az) * dz) / len2;
+    if (t < 0.05 || t > 0.95) continue;
+    const px = ax + dx * t - s.x, py = ay + dy * t - s.y, pz = az + dz * t - s.z;
+    if (px * px + pz * pz < s.r * s.r * 0.55 && Math.abs(py) < 2.4) return true;
+  }
+  return false;
+}
+
 // Nearest enemy this bot can actually see, or null.
-function findTarget(b, agents, boxes) {
+function findTarget(b, agents, boxes, smokes) {
   const eye = eyeOf(b);
   let best = null;
   let bestD = Infinity;
@@ -133,6 +150,7 @@ function findTarget(b, agents, boxes) {
     const ang = Math.abs(angleTo(b.yaw, dx, dz));
     if (ang > BOT.fov / 2) continue;
     if (!hasLOS(eye.x, eye.y, eye.z, a.pos.x, a.pos.y + a.eye, a.pos.z, boxes)) continue;
+    if (smokeBlocks(eye.x, eye.y, eye.z, a.pos.x, a.pos.y + a.eye, a.pos.z, smokes)) continue;
     best = a;
     bestD = d;
   }
@@ -177,6 +195,13 @@ export function updateBot(b, dt, ctx) {
   const boxes = world.boxes;
 
   if (st.heardT > 0) st.heardT -= dt;
+  if (st.blindT > 0) {
+    st.blindT -= dt;
+    st.target = null;
+    b.yaw += Math.sin(S_T()) * dt * 1.4;
+    stepBody(b, dt, 0, 0, 0, world.boxes);
+    return;
+  }
   if (b.weapon) {
     if (b.weapon.mag === 0 || (b.weapon.mag < b.weapon.def.mag * 0.15 && st.target === null)) {
       if (!b.weapon.reloading) {
@@ -187,7 +212,7 @@ export function updateBot(b, dt, ctx) {
     }
   }
 
-  const target = findTarget(b, agents, boxes);
+  const target = b.bot.blindT > 0 ? null : findTarget(b, agents, boxes, ctx.smokes);
   if (target) {
     if (st.target !== target) {
       st.target = target;
@@ -243,7 +268,7 @@ function roam(b, dt, ctx) {
       if (st.step >= st.path.length) {
         st.path.length = 0;
         st.step = 0;
-        st.role = ROLE.HOLD;
+        st.role = b.team === "rooks" ? ROLE.HOLD : ROLE.HOLD;
         st.holdT = rng.range(2, 5);
       }
     }
@@ -264,7 +289,7 @@ function roam(b, dt, ctx) {
       // Shift to another corner of the site after a while, so bots never freeze.
       const site = world.sites[st.wantsSite];
       if (site) {
-        st.goal = { x: site.x + (Math.random() - 0.5) * site.r * 1.4, z: site.z + (Math.random() - 0.5) * site.r * 1.4 };
+        st.goal = { x: site.x + (ctx.rng.rnd() - 0.5) * site.r * 1.4, z: site.z + (ctx.rng.rnd() - 0.5) * site.r * 1.4 };
         setPath(b, world, ctx.rng);
         st.role = ROLE.ADVANCE;
         st.holdT = 6;
@@ -284,6 +309,7 @@ function engage(b, dt, ctx, target) {
   const st = b.bot;
   const { world, rng } = ctx;
   const dist = Math.hypot(target.pos.x - b.pos.x, target.pos.z - b.pos.z);
+  const eye = eyeOf(b);
   turnToward(b, target.pos.x, target.pos.y + target.eye * 0.82, target.pos.z, dt, 4.4);
 
   // Stand still to shoot, or creep sideways so a duel is not two statues.
@@ -371,7 +397,7 @@ function defendPlanted(b, dt, ctx) {
     } else {
       stepBody(b, dt, 0, 0, 0, ctx.world.boxes);
       b.yaw += dt * 0.5 * (st.scanDir || 1);
-      if (Math.random() < dt * 0.2) st.scanDir *= -1;
+      if (ctx.rng.rnd() < dt * 0.2) st.scanDir *= -1;
     }
   }
 }

@@ -72,8 +72,16 @@ export function stepBody(a, dt, wishX, wishZ, speed, boxes) {
 
 // The player's own step: mouse look is already in S.input, this applies stance,
 // jump and view bob on top of the shared body step.
-export function updatePlayer(p, dt, input, boxes) {
+export function updatePlayer(p, dt, input, boxes, frozen) {
   if (!p.alive) { p.vel.x = 0; p.vel.z = 0; return; }
+  if (frozen) {
+    // Freeze time: you may look around, not walk.
+    p.yaw = input.yaw;
+    p.pitch = input.pitch;
+    p.speed = 0;
+    stepBody(p, dt, 0, 0, 0, boxes);
+    return;
+  }
   const wish = wishVector(input.yaw, input.move.x, input.move.y);
   const speed = moveSpeed(p, input);
   if (p.crouched && input.keys.has("Space")) p.crouched = false;

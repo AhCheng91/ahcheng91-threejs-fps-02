@@ -74,7 +74,7 @@ function boot() {
   for (const a of agents) avatars.set(a, makeAvatar(scene, a));
 
   const ctx = {
-    world, agents, rng, bus, fx, audio, rounds, grenades, hud,
+    world, agents, rng, bus, fx, audio, rounds, grenades, hud, smokes: S.smokes,
     applyDamage(shooter, victim, dmg, part) {
       if (S.mode !== "play" && victim.isPlayer) return 0;
       const before = victim.alive;
@@ -147,7 +147,7 @@ function boot() {
     hud.banner(m.winner === "rooks" ? "ROOKS WIN THE MATCH" : "WARDENS WIN THE MATCH", GAME, 8);
   });
   bus.on(EV.PLANT, (m) => {
-    hud.banner("CHARGE PLANTED", "SITE " + m.site + " · " + ROUND.fuse + "S", 2.6);
+    hud.banner("CHARGE PLANTED", "SITE " + m.site + " \u00B7 " + ROUND.fuse + "S", 2.6);
     audio.play("plant");
   });
 
@@ -220,7 +220,7 @@ function boot() {
     const p = S.player;
 
     if (p.alive) {
-      updatePlayer(p, dt, S.input, world.boxes);
+      updatePlayer(p, dt, S.input, world.boxes, S.phase === "buy" || S.phase === "end");
       const w = p.weapon;
       if (w) {
         tickWeapon(w, dt);
@@ -239,6 +239,7 @@ function boot() {
 
     for (const a of agents) {
       if (!a.bot || !a.alive) continue;
+      if (S.phase === "buy" || S.phase === "end") { if (a.weapon) tickWeapon(a.weapon, dt); continue; }
       if (a.weapon) tickWeapon(a.weapon, dt);
       updateBot(a, dt, ctx);
     }

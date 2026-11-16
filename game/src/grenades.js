@@ -54,10 +54,18 @@ export function createGrenades(S, world, bus) {
     } else if (g.kind === "veil") {
       if (fx) fx.smoke(g.pos.x, g.pos.y + 0.5, g.pos.z, [0.2, 0.22, 0.24]);
       if (audio) audio.play("smoke", { pos: g.pos, byPlayer: false });
+      if (S.smokes) S.smokes.push({ x: g.pos.x, y: g.pos.y + 0.9, z: g.pos.z, r: def.radius, t: def.life });
       if (bus) bus.emit(EV.NOISE, { x: g.pos.x, y: g.pos.y, z: g.pos.z, team: g.owner.team, r: 12 });
     } else {
       if (fx) fx.blast(g.pos.x, g.pos.y, g.pos.z, 6);
       if (audio) audio.play("beep", { pos: g.pos, byPlayer: false });
+      for (const a of agents) {
+        if (!a.alive || !a.bot) continue;
+        const d = Math.hypot(a.pos.x - g.pos.x, a.pos.y + a.eye - g.pos.y, a.pos.z - g.pos.z);
+        if (d > def.radius) continue;
+        if (!hasLOS(g.pos.x, g.pos.y, g.pos.z, a.pos.x, a.pos.y + a.eye, a.pos.z, world.boxes)) continue;
+        a.bot.blindT = Math.max(a.bot.blindT || 0, def.duration * (1 - d / def.radius));
+      }
       const a = S.player;
       if (a && a.alive) {
         const d = Math.hypot(a.pos.x - g.pos.x, a.pos.z - g.pos.z);
@@ -77,6 +85,12 @@ export function createGrenades(S, world, bus) {
     },
     update(dt, ctx) {
       if (flashT > 0) flashT -= dt;
+      if (S.smokes) {
+        for (let i = S.smokes.length - 1; i >= 0; i--) {
+          S.smokes[i].t -= dt;
+          if (S.smokes[i].t <= 0) S.smokes.splice(i, 1);
+        }
+      }
       for (let i = live.length - 1; i >= 0; i--) {
         const g = live[i];
         g.vel.y -= 13.5 * dt;
