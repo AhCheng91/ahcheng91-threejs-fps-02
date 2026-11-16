@@ -98,7 +98,7 @@ export function createHud(S) {
     v.textContent = victim.name;
     const w = document.createElement("span");
     w.className = "wep";
-    w.textContent = (headshot ? "\u25C6 " : "") + (W[weaponId] ? W[weaponId].name.split(" ")[0] : weaponId.toUpperCase());
+    w.textContent = (headshot ? "✦ " : "") + (W[weaponId] ? W[weaponId].name.split(" ")[0] : weaponId.toUpperCase());
     node.append(a, document.createTextNode(" "), w, document.createTextNode(" "), v);
     return { node, t: 5.2 };
   }
@@ -136,10 +136,10 @@ export function createHud(S) {
       let bombline = "";
       let objective = "ROUND " + Math.max(1, S2.roundNum);
       if (S2.phase === "buy") {
-        objective = "BUY PHASE \u00B7 PRESS B";
+        objective = "BUY PHASE · PRESS B";
         bombline = "";
       } else if (live && live.planted) {
-        bombline = "CHARGE ARMED \u00B7 " + Math.max(0, Math.ceil(live.fuse)) + "S";
+        bombline = "CHARGE ARMED · " + Math.max(0, Math.ceil(live.fuse)) + "S";
         objective = "WARDENS: DEFUSE IT";
       } else if (p && live && live.carrier === p) {
         objective = "YOU CARRY THE CHARGE";
@@ -152,10 +152,8 @@ export function createHud(S) {
       text(el.objective, "obj", objective);
 
       for (let i = 0; i < pips.length; i++) {
-        const want = "";
         const cls = i < S2.score.rooks ? "pip on rooks" : i >= pips.length - S2.score.wardens ? "pip on wardens" : "pip";
         if (pips[i].className !== cls) pips[i].className = cls;
-        void want;
       }
 
       if (el.compass) {
@@ -197,15 +195,13 @@ export function createHud(S) {
         if (flashT <= 0 && el.dmgflash) el.dmgflash.className = "";
       }
       if (dmgT > 0) dmgT -= dt;
-      void boardOpen;
     },
-    hit(kill, head) {
+    hit(kill) {
       if (!el.hitmarker) return;
       el.hitmarker.className = "";
       void el.hitmarker.offsetWidth;
       el.hitmarker.className = "show" + (kill ? " kill" : "");
       hitT = 0.18;
-      void head;
     },
     damage(angle) {
       if (!el.dmgdir) return;

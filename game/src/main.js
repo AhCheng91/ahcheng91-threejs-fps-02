@@ -2,13 +2,13 @@
 // then run one fixed 1/60 s step for the simulation and one render per frame.
 
 import * as THREE from "three";
-import { PAL, PLAYER, BOT, ROUND, SHOT, GAME } from "./config.js";
+import { PAL, PLAYER, ROUND, SHOT, GAME } from "./config.js";
 import { S, EV } from "./state.js";
 import { makeRNG } from "./rng.js";
 import { buildWorld } from "./world.js";
 import { buildNav } from "./nav.js";
 import { createPlayer, updatePlayer, damageAgent, eyeHeight } from "./player.js";
-import { makeWeapon, tickWeapon, tryFire, startReload, refillWeapon } from "./weapons.js";
+import { makeWeapon, tickWeapon, tryFire, startReload } from "./weapons.js";
 import { makeBot, updateBot, onNoise, botWeapon } from "./bots.js";
 import { createRounds } from "./rounds.js";
 import { createHud } from "./hud.js";
@@ -37,7 +37,7 @@ function boot() {
   renderer.setPixelRatio(Math.min(1.5, window.devicePixelRatio || 1));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.4;
+  renderer.toneMappingExposure = 1.5;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
@@ -64,7 +64,7 @@ function boot() {
   const bus = S.bus;
   const rounds = createRounds(S, world, bus, rng, agents);
   S.rounds = rounds;
-  const grenades = createGrenades(S, world, rng, bus);
+  const grenades = createGrenades(S, world, bus);
 
   const hud = createHud(S);
   const buyMenu = createBuyMenu(S, (id) => rounds.buy(S.player, id));
@@ -125,8 +125,8 @@ function boot() {
     if (code === "KeyB") { buyMenu.toggle(); return; }
     if (buyMenu.keydown(code)) return;
     if (code === "KeyR") { startReload(S.player.weapon); audio.play("reload"); return; }
-    if (code === "KeyG") { grenades.throwFrom(S.player, "shard", fx, audio); return; }
-    if (code === "KeyQ") { grenades.throwFrom(S.player, "veil", fx, audio); return; }
+    if (code === "KeyG") { grenades.throwFrom(S.player, "shard", audio); return; }
+    if (code === "KeyQ") { grenades.throwFrom(S.player, "veil", audio); return; }
     if (code === "Tab") { board.classList.add("show"); return; }
     if (code === "Escape" && S.started) {
       S.paused = true;
@@ -147,7 +147,7 @@ function boot() {
     hud.banner(m.winner === "rooks" ? "ROOKS WIN THE MATCH" : "WARDENS WIN THE MATCH", GAME, 8);
   });
   bus.on(EV.PLANT, (m) => {
-    hud.banner("CHARGE PLANTED", "SITE " + m.site + " \u00B7 " + ROUND.fuse + "S", 2.6);
+    hud.banner("CHARGE PLANTED", "SITE " + m.site + " · " + ROUND.fuse + "S", 2.6);
     audio.play("plant");
   });
 
@@ -215,6 +215,7 @@ function boot() {
 
   function simulate(dt) {
     S.t += dt;
+    input.readMove();
     S.frames = (S.frames || 0) + 1;
     const p = S.player;
 
@@ -369,6 +370,3 @@ function makeBombMesh(scene) {
 
 const __game = boot();
 if (typeof window !== "undefined") window.__game = __game;
-void BOT;
-void SHOT;
-void refillWeapon;

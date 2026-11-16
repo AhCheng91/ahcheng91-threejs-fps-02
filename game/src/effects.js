@@ -39,6 +39,7 @@ export function createEffects(scene) {
   partMesh.frustumCulled = false;
   scene.add(partMesh);
   let partHead = 0;
+  let anyParticle = false;
 
   const muzzleLight = new THREE.PointLight(PAL.lamp, 0, 12, 2);
   scene.add(muzzleLight);
@@ -55,8 +56,6 @@ export function createEffects(scene) {
     blasts.push({ mesh: m, t: 0, max: 1, r: 1 });
   }
   let blastHead = 0;
-
-  const tmp = { x: 0, y: 0, z: 0 };
 
   function spawn(x, y, z, vx, vy, vz, life, r, g, b, grav) {
     const i = partHead;
@@ -97,7 +96,7 @@ export function createEffects(scene) {
 
     muzzle(p, byPlayer) {
       muzzleLight.position.set(p.x, p.y, p.z);
-      muzzleLight.intensity = byPlayer ? 22 : 10;
+      muzzleLight.intensity = byPlayer ? 9 : 5;
       muzzleT = 0.05;
     },
 
@@ -171,8 +170,6 @@ export function createEffects(scene) {
           partVel[i * 3 + 2] *= 0.6;
         }
         const f = partLife[i] / partMax[i];
-        const drift = partGrav[i] < 0 ? 1.6 : 1;
-        partCol[i * 3] *= drift > 1 ? 1 : 1;
         if (partGrav[i] < 0) {
           partCol[i * 3] = 0.26 * f + 0.02;
           partCol[i * 3 + 1] = 0.28 * f + 0.02;
@@ -187,9 +184,8 @@ export function createEffects(scene) {
             partCol[i * 3 + 2] *= 0.5;
           }
         }
-        void f;
       }
-      if (alive || partHead >= 0) {
+      if (alive) {
         partGeo.attributes.position.needsUpdate = true;
         partGeo.attributes.color.needsUpdate = true;
       }
@@ -208,7 +204,6 @@ export function createEffects(scene) {
         b.mesh.scale.setScalar(0.4 + f * b.r * 0.62);
         b.mesh.material.opacity = 0.55 * (1 - f);
       }
-      void tmp;
     },
   };
 }

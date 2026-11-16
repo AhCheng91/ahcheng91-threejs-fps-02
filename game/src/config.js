@@ -135,8 +135,8 @@ export const ROUND = {
 
 export const BOT = {
   fov: 1.745,        // 100deg vision cone
-  sight: 40,
-  reactMin: 0.25, reactMax: 0.5,
+  sight: 34,
+  reactMin: 0.5, reactMax: 1.0,
   aimTrack: 0.8,
   burstMin: 3, burstMax: 6,
   separation: 1.2,

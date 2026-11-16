@@ -2,7 +2,7 @@
 // stance and speed, recoil that climbs and settles, pellets, range falloff and the
 // head multiplier. The hit is a ray against the same world boxes the movement uses.
 
-import { W, PHYS, DT } from "./config.js";
+import { W, PHYS } from "./config.js";
 import { castRay } from "./collision.js";
 import { EV } from "./state.js";
 
@@ -165,9 +165,3 @@ export function falloff(range, dist) {
   const t = (dist - near) / (far - near);
   return 1 + (min - 1) * t;
 }
-
-export function ammoText(w) {
-  return { mag: w.mag, reserve: w.reserve };
-}
-
-export const WEAPON_STEP = DT;

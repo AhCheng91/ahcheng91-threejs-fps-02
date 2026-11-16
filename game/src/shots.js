@@ -66,21 +66,22 @@ export function setupShot(name, seed, api) {
     return;
   }
   if (name === "cover") {
-    place(player, 2.5, 0, 21, 0);
-    aim(player, 1.5, 1.4, -6);
-    player.pitch = 0.02;
-    STATE.input.pitch = 0.02;
-    place(allies[0], 5.5, 0, 9, 0);
-    aim(allies[0], 2, 1.3, -8);
-    place(allies[1], -3.5, 0, 4, 0);
-    aim(allies[1], 0, 1.3, -12);
-    place(allies[2], -6, 0, 14, 0);
-    place(enemies[0], 2, 0, -12, 0);
-    aim(enemies[0], 3, 1.3, 18);
-    place(enemies[1], -5, 0, -8, 0);
-    aim(enemies[1], 0, 1.3, 16);
-    place(enemies[2], 8, 0, -16, 0);
-    place(enemies[3], -9, 0, -19, 0);
+    place(player, 26.5, 0, -9, 0);
+    aim(player, 27, 1.0, -27);
+    player.pitch = -0.01;
+    STATE.input.pitch = -0.01;
+    place(allies[0], 22.5, 0, -13, 0);
+    aim(allies[0], 26, 1.2, -26);
+    place(allies[1], 30.5, 0, -14.5, 0);
+    aim(allies[1], 28, 1.2, -26);
+    place(allies[2], 24, 0, -4, 0);
+    place(enemies[0], 25, 0, -24, 0);
+    aim(enemies[0], 26.5, 1.3, -9);
+    place(enemies[1], 29.5, 0, -25, 0);
+    aim(enemies[1], 27, 1.3, -10);
+    place(enemies[2], 23, 0, -27.5, 0);
+    aim(enemies[2], 26, 1.3, -11);
+    place(enemies[3], 30, 0, -20, 0);
     for (const e of enemies) e.bot.role = "hold";
   } else if (name === "buy") {
     place(player, 0, 0, 24, 0);
@@ -108,7 +109,7 @@ export function setupShot(name, seed, api) {
     place(enemies[3], 8, 0, -20, 0);
     aim(enemies[3], 24, 1.3, -17);
     for (const a of agents) if (a.bot) { a.bot.reactT = 0; a.bot.seeT = 0.6; }
-    hud.banner("ROUND 5", "SITE A \u00B7 ROOKS PUSH", 3);
+    hud.banner("ROUND 5", "SITE A · ROOKS PUSH", 3);
   } else {
     // objective: the charge is down at site A and the clock is running out.
     rounds.forcePlant("A");
@@ -117,7 +118,7 @@ export function setupShot(name, seed, api) {
     aim(player, 27, 0.35, -27);
     player.crouched = true;
     STATE.input.crouch = true;
-    place(allies[0], 22, 0, -19.5, 0);
+    place(allies[0], 23.5, 0, -21.5, 0);
     aim(allies[0], 26, 0.5, -26);
     place(allies[1], 29, 0, -21, 0);
     aim(allies[1], 27, 0.5, -27);
@@ -127,7 +128,7 @@ export function setupShot(name, seed, api) {
     place(enemies[1], 17, 0, -14, 0);
     place(enemies[2], 9, 0, -16, 0);
     place(enemies[3], 20, 0, -10, 0);
-    hud.banner("CHARGE ARMED", "SITE A \u00B7 34S", 4);
+    hud.banner("CHARGE ARMED", "SITE A · 34S", 4);
   }
 
   S.phase = name === "buy" ? "buy" : "live";
@@ -136,6 +137,4 @@ export function setupShot(name, seed, api) {
     a.speed = 0;
     a.bob = 0;
   }
-  void world;
-  void STATE;
 }

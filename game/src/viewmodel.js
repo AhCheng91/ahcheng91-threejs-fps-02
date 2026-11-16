@@ -5,9 +5,9 @@
 import * as THREE from "three";
 import { PAL } from "./config.js";
 
-const BODY = 0x3d464c;
+const BODY = 0x2f373d;
 const DARK = 0x262c30;
-const METAL = 0x6b757c;
+const METAL = 0x4d565c;
 const GLOVE = 0x22303a;
 const SKIN = 0x8a6b52;
 
@@ -96,7 +96,7 @@ function buildShape(id) {
 
 export function buildViewmodel(camera) {
   const root = new THREE.Group();
-  root.scale.setScalar(0.82);
+  root.scale.setScalar(0.66);
   root.position.set(0.19, -0.2, -0.34);
   camera.add(root);
 
@@ -149,9 +149,9 @@ export function buildViewmodel(camera) {
       if (reloading && reloadT > 0) dip = Math.max(dip, 0.08); else dip *= Math.max(0, 1 - dt * 7);
 
       const bob = Math.sin(performance.now() * 0.009) * 0.006 * Math.min(1, speed / 4.6);
-      const baseX = 0.21 - aim * 0.21;
-      const baseY = -0.2 + aim * 0.075;
-      const baseZ = -0.34 + aim * 0.12;
+      const baseX = 0.235 - aim * 0.235;
+      const baseY = -0.225 + aim * 0.085;
+      const baseZ = -0.3 + aim * 0.12;
       root.position.set(
         baseX + swayX * 0.5 + bob,
         baseY + swayY * 0.5 - dip + bob * 0.6,

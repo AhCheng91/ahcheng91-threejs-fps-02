@@ -7,11 +7,11 @@ import { moveSphere, hasLOS } from "./collision.js";
 import { damageAgent } from "./player.js";
 import { EV } from "./state.js";
 
-export function createGrenades(S, world, rng, bus) {
+export function createGrenades(S, world, bus) {
   const live = [];
   let flashT = 0;
 
-  function throwFrom(a, kind, fx, audio) {
+  function throwFrom(a, kind, audio) {
     if (!a.nades || !a.nades[kind] || a.nades[kind] <= 0) return false;
     a.nades[kind]--;
     const d = {
@@ -30,7 +30,6 @@ export function createGrenades(S, world, rng, bus) {
       rest: 0,
     });
     if (audio) audio.play("step", { pos: a.pos, byPlayer: a.isPlayer });
-    void fx;
     return true;
   }
 
@@ -81,22 +80,16 @@ export function createGrenades(S, world, rng, bus) {
       for (let i = live.length - 1; i >= 0; i--) {
         const g = live[i];
         g.vel.y -= 13.5 * dt;
-        const before = { x: g.pos.x, y: g.pos.y, z: g.pos.z };
         const hits = moveSphere(g.pos, g.vel, dt, 0.12, world.boxes);
         if (hits[0] || hits[2]) { g.vel.x *= -0.35; g.vel.z *= -0.35; g.vel.y *= 0.7; }
         if (hits[1]) { g.vel.y *= -0.32; g.vel.x *= 0.6; g.vel.z *= 0.6; g.rest = 0.2; }
         if (g.pos.y < 0.1) { g.pos.y = 0.1; g.vel.y = Math.abs(g.vel.y) * 0.3; g.vel.x *= 0.72; g.vel.z *= 0.72; }
         g.fuse -= dt;
-        void before;
         if (g.fuse <= 0) {
           explode(g, ctx);
           live.splice(i, 1);
         }
       }
-      void rng;
-    },
-    onKillHook(fn) {
-      return (k, v, w) => fn(k, v, w);
     },
   };
 }

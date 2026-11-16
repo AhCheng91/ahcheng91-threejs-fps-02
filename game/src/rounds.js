@@ -66,10 +66,7 @@ export function createRounds(S, world, bus, rng, agents) {
     if (bomb.carrier && bomb.carrier.bot) bomb.carrier.bot.hasBomb = true;
 
     planRound(agents.filter((a) => a.bot), rng, world, S.roundNum);
-    if (bomb.carrier && bomb.carrier.bot) {
-      bomb.carrier.bot.role = "advance";
-      bomb.carrier.bot.wantsSite = bomb.carrier.bot.wantsSite;
-    }
+    if (bomb.carrier && bomb.carrier.bot) bomb.carrier.bot.role = "advance";
     bus.emit(EV.ROUND_START, { round: S.roundNum });
     bus.emit(EV.PHASE, S.phase);
   }
@@ -99,15 +96,13 @@ export function createRounds(S, world, bus, rng, agents) {
     S.phaseT = 4.5;
     S.roundWinner = winner;
     S.score[winner]++;
-    const loser = winner === "rooks" ? "wardens" : "rooks";
     for (const a of agents) {
       const win = a.team === winner;
-      const bonus = win ? ECONOMY.win : Math.min(ECONOMY.lossCap, ECONOMY.lossBase + S.roundNum * 0);
+      const bonus = win ? ECONOMY.win : ECONOMY.lossBase;
       a.money = Math.min(ECONOMY.max, a.money + bonus);
       a.nades = a.nades || { shard: 0, veil: 0, whiteout: 0 };
       // Losing side keeps armour; the winner's armour is repaired for the next buy.
       if (win && a.alive) a.health = PLAYER.health;
-      void loser;
     }
     bus.emit(EV.ROUND_END, { winner, reason, score: { ...S.score } });
     if (bomb.planted) bomb.planted = false;

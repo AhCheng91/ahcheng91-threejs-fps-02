@@ -2,11 +2,10 @@
 // through the same collision boxes the player does, hears gunfire, turns and fires in
 // bursts with an aim error that shrinks the longer it has the target in view.
 
-import { BOT, PHYS, W } from "./config.js";
+import { BOT, PHYS } from "./config.js";
 import { hasLOS } from "./collision.js";
 import { makeAgent, stepBody, wishVector, respawnAgent } from "./player.js";
-import { tryFire, aimVector, clampPitch } from "./weapons.js";
-import { EV } from "./state.js";
+import { tryFire, clampPitch } from "./weapons.js";
 
 const ROLE = {
   HOLD: "hold",
@@ -194,7 +193,7 @@ export function updateBot(b, dt, ctx) {
       st.target = target;
       st.reactT = rng.range(BOT.reactMin, BOT.reactMax) + (st.role === ROLE.HOLD ? 0.1 : 0);
       st.seeT = 0;
-      st.aimErr = 0.16;
+      st.aimErr = 0.26;
     }
     st.seeT += dt;
     st.loseT = 0;
@@ -202,7 +201,7 @@ export function updateBot(b, dt, ctx) {
     st.loseT += dt;
     if (st.loseT > 1.1) {
       st.target = null;
-      st.aimErr = 0.3;
+      st.aimErr = 0.38;
     }
   }
 
@@ -238,14 +237,13 @@ function roam(b, dt, ctx) {
   }
   const wp = st.path[st.step];
   if (wp) {
-    turnToward(b, b.pos.x + Math.sin(b.yaw) * -0, b.pos.y + b.eye, b.pos.z + Math.cos(b.yaw) * -0, dt, 3.2);
     turnTowardLook(b, wp.x, wp.z, dt);
     if (walkTo(b, wp.x, wp.z, dt, world, b.crouched ? 0.6 : 1)) {
       st.step++;
       if (st.step >= st.path.length) {
         st.path.length = 0;
         st.step = 0;
-        st.role = b.team === "rooks" ? ROLE.HOLD : ROLE.HOLD;
+        st.role = ROLE.HOLD;
         st.holdT = rng.range(2, 5);
       }
     }
@@ -286,7 +284,6 @@ function engage(b, dt, ctx, target) {
   const st = b.bot;
   const { world, rng } = ctx;
   const dist = Math.hypot(target.pos.x - b.pos.x, target.pos.z - b.pos.z);
-  const eye = eyeOf(b);
   turnToward(b, target.pos.x, target.pos.y + target.eye * 0.82, target.pos.z, dt, 4.4);
 
   // Stand still to shoot, or creep sideways so a duel is not two statues.
@@ -313,9 +310,8 @@ function engage(b, dt, ctx, target) {
 
   // Aim error falls as the bot keeps the target; movement and distance add to it.
   const moving = b.speed > 0.6;
-  const errBase = st.aimErr + (moving ? 0.05 : 0) + Math.min(0.1, dist * 0.0026);
+  const errBase = st.aimErr + (moving ? 0.06 : 0) + Math.min(0.12, dist * 0.003);
   const w = b.weapon;
-  const aim = aimVector(b.yaw, b.pitch);
   const canShoot = Math.abs(angleTo(b.yaw, target.pos.x - b.pos.x, target.pos.z - b.pos.z)) < 0.12;
   if (!canShoot) return;
   if (w.cool > 0) return;
@@ -338,7 +334,6 @@ function engage(b, dt, ctx, target) {
   tryFire(b, w, world, ctx.agents, rng, ctx);
   b.yaw = saveYaw;
   b.pitch = savePitch;
-  void aim;
 }
 
 // After the charge is planted, attackers hold the site and wardens come to it.
@@ -420,6 +415,4 @@ export function hearNoise(b, ev, world) {
 
 export function onNoise(bots, ev, world) {
   for (const b of bots) hearNoise(b, ev, world);
-  void EV;
-  void W;
 }
