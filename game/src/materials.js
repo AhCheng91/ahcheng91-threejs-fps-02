@@ -15,7 +15,7 @@ const speckle = (g, c, n) => { for (let i = 0; i < n; i++) { g.fillStyle = c; g.
 const mat = (map, o) => new THREE.MeshStandardMaterial({ map, ...o });
 
 export function buildMaterials() {
-  const concrete = mat(tex(4, g => { fill(g, "#98958e"); speckle(g, "#6b6963", 900); }), { roughness: 0.95 });
+  const concrete = mat(tex(9, g => { fill(g, "#a09d95"); speckle(g, "#6b6963", 900); }), { roughness: 0.95 });
   const steel = mat(tex(2, g => {
     fill(g, "#8d949c");
     for (let y = 0; y < 128; y += 2) { g.globalAlpha = 0.1 + Math.random() * 0.25; g.fillStyle = "#c2c9d1"; g.fillRect(0, y, 128, 1); }

@@ -14,14 +14,14 @@ const SKIN = 0x8a6b52;
 function box(w, h, d, color, rough) {
   return new THREE.Mesh(
     new THREE.BoxGeometry(w, h, d),
-    new THREE.MeshStandardMaterial({ color, metalness: 0.55, roughness: rough ?? 0.45 }),
+    new THREE.MeshStandardMaterial({ color, metalness: 0.35, roughness: rough ?? 0.65 }),
   );
 }
 
 function tube(r, len, color) {
   return new THREE.Mesh(
     new THREE.CylinderGeometry(r, r, len, 10),
-    new THREE.MeshStandardMaterial({ color, metalness: 0.8, roughness: 0.35 }),
+    new THREE.MeshStandardMaterial({ color, metalness: 0.6, roughness: 0.5 }),
   );
 }
 
@@ -96,7 +96,7 @@ function buildShape(id) {
 
 export function buildViewmodel(camera) {
   const root = new THREE.Group();
-  root.scale.setScalar(0.66);
+  root.scale.setScalar(0.6);
   root.position.set(0.19, -0.2, -0.34);
   camera.add(root);
 

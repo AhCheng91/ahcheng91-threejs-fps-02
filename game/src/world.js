@@ -27,8 +27,7 @@ export function buildWorld(scene) {
       boxes.push({ x0, y0, z0, x1, y1, z1 });
     }
   }
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(half * 2, half * 2), mats.wet);
-  ground.rotation.x = -Math.PI / 2;
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(half * 2, half * 2), mats.wet);  ground.rotation.x = -Math.PI / 2;
   scene.add(ground);
 
   const sites = {};
@@ -62,6 +61,47 @@ export function buildWorld(scene) {
     light.position.set(lx, 4.3, lz);
     scene.add(post, orb, light);
     lamps.push({ x: lx, y: 4.3, z: lz, light });
+  }
+
+  // The works' own signage: painted on canvas, hung over the north wall.
+  const signCanvas = document.createElement("canvas");
+  signCanvas.width = 512;
+  signCanvas.height = 128;
+  const g2 = signCanvas.getContext("2d");
+  g2.fillStyle = "#101718";
+  g2.fillRect(0, 0, 512, 128);
+  g2.strokeStyle = "#ffb040";
+  g2.lineWidth = 6;
+  g2.strokeRect(8, 8, 496, 112);
+  g2.fillStyle = "#ffc46b";
+  g2.font = "bold 54px monospace";
+  g2.textAlign = "center";
+  g2.textBaseline = "middle";
+  g2.fillText("KESSLER WORKS", 256, 56);
+  g2.fillStyle = "#7fd4c9";
+  g2.font = "20px monospace";
+  g2.fillText("PUMP HOUSE No. 4  \u00B7  KEEP OUT", 256, 98);
+  const signTex = new THREE.CanvasTexture(signCanvas);
+  signTex.colorSpace = THREE.SRGBColorSpace;
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(10, 2.5), new THREE.MeshBasicMaterial({ map: signTex }));
+  sign.position.set(0, 4.2, -30.9);
+  scene.add(sign);
+  const signLight = new THREE.PointLight(0xffb040, 9, 12, 2);
+  signLight.position.set(0, 3.4, -29.4);
+  scene.add(signLight);
+
+  // A hazard band around the yard at shoulder height breaks up the long walls.
+  const bandMat = new THREE.MeshStandardMaterial({ color: PAL.hazard, roughness: 0.8, emissive: PAL.hazard, emissiveIntensity: 0.18 });
+  const bandGeo = new THREE.BoxGeometry(1, 1, 1);
+  const bands = [
+    [-32, 1.5, -31.4, 64, 0.22, 0.12], [-31.4, 1.5, -32, 0.12, 0.22, 64],
+    [31.4, 1.5, -32, 0.12, 0.22, 64], [-32, 1.5, 31.4, 64, 0.22, 0.12],
+  ];
+  for (const [bx, by, bz, sx, sy, sz] of bands) {
+    const band = new THREE.Mesh(bandGeo, bandMat);
+    band.position.set(bx, by, bz);
+    band.scale.set(sx, sy, sz);
+    scene.add(band);
   }
 
   const drumGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.95, 12);

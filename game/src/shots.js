@@ -88,9 +88,9 @@ export function setupShot(name, seed, api) {
     aim(player, 0, 1.6, 10);
     for (let i = 0; i < allies.length; i++) place(allies[i], -3 + i * 3, 0, 20 + (i % 2) * 2, 0);
     for (let i = 0; i < enemies.length; i++) place(enemies[i], -6 + i * 4, 0, -20, 0);
-    buyMenu.setOpen(true);
     S.phase = "buy";
     S.phaseT = 14;
+    buyMenu.setOpen(true);
   } else if (name === "fight") {
     place(player, 25, 0, -17, 0);
     aim(player, 13, 1.3, -17);
@@ -109,26 +109,28 @@ export function setupShot(name, seed, api) {
     place(enemies[3], 8, 0, -20, 0);
     aim(enemies[3], 24, 1.3, -17);
     for (const a of agents) if (a.bot) { a.bot.reactT = 0; a.bot.seeT = 0.6; }
-    hud.banner("ROUND 5", "SITE A · ROOKS PUSH", 3);
+    hud.banner("ROUND 5", "SITE A \u00B7 ROOKS PUSH", 3);
   } else {
-    // objective: the charge is down at site A and the clock is running out.
+    // objective: the charge is down at site A and the wardens are coming to it.
     rounds.forcePlant("A");
     rounds.bomb.fuse = 34;
-    place(player, 24.5, 0, -23.5, 0);
-    aim(player, 27, 0.35, -27);
+    place(player, 19.5, 0, -20, 0);
+    aim(player, 27, 0.6, -27);
     player.crouched = true;
     STATE.input.crouch = true;
-    place(allies[0], 23.5, 0, -21.5, 0);
-    aim(allies[0], 26, 0.5, -26);
-    place(allies[1], 29, 0, -21, 0);
-    aim(allies[1], 27, 0.5, -27);
-    place(allies[2], 21, 0, -25, 0);
-    place(enemies[0], 14, 0, -22, 0);
-    aim(enemies[0], 25, 1.3, -25);
-    place(enemies[1], 17, 0, -14, 0);
-    place(enemies[2], 9, 0, -16, 0);
-    place(enemies[3], 20, 0, -10, 0);
-    hud.banner("CHARGE ARMED", "SITE A · 34S", 4);
+    player.eye = 1.62;
+    place(allies[0], 23, 0, -23, 0);
+    aim(allies[0], 27, 1.0, -27);
+    place(allies[1], 16.5, 0, -24, 0);
+    aim(allies[1], 26, 1.0, -26.5);
+    place(allies[2], 21, 0, -16.5, 0);
+    place(enemies[0], 26.4, 0, -26.2, 0);
+    aim(enemies[0], 27, 0.4, -27);
+    place(enemies[1], 30, 0, -23, 0);
+    aim(enemies[1], 20, 1.3, -20);
+    place(enemies[2], 24, 0, -29.5, 0);
+    place(enemies[3], 30.5, 0, -28, 0);
+    hud.banner("CHARGE ARMED", "SITE A \u00B7 34S", 4);
   }
 
   S.phase = name === "buy" ? "buy" : "live";

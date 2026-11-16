@@ -41,7 +41,7 @@ export function createEffects(scene) {
   let partHead = 0;
   let anyParticle = false;
 
-  const muzzleLight = new THREE.PointLight(PAL.lamp, 0, 12, 2);
+  const muzzleLight = new THREE.PointLight(PAL.lamp, 0, 9, 2);
   scene.add(muzzleLight);
   let muzzleT = 0;
 
@@ -96,7 +96,7 @@ export function createEffects(scene) {
 
     muzzle(p, byPlayer) {
       muzzleLight.position.set(p.x, p.y, p.z);
-      muzzleLight.intensity = byPlayer ? 9 : 5;
+      muzzleLight.intensity = byPlayer ? 2.6 : 1.8;
       muzzleT = 0.05;
     },
 
