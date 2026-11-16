@@ -90,7 +90,8 @@ export function updatePlayer(p, dt, input, boxes) {
 
 export function wishVector(yaw, mx, my) {
   const sin = Math.sin(yaw), cos = Math.cos(yaw);
-  return { x: mx * cos - my * sin, z: mx * sin + my * cos };
+  // forward is -Z at yaw 0, right is +X, so the two axes mix with opposite signs.
+  return { x: mx * cos - my * sin, z: -mx * sin - my * cos };
 }
 
 export function desiredEye(a) {
